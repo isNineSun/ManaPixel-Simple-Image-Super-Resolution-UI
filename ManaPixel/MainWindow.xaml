@@ -22,39 +22,34 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0">
-                <Button Width="350" Height="300" Margin="10,10,0,0"
-                    FontFamily="微软雅黑" FontSize="16" BorderThickness="3"
-                    IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    AllowDrop="True" Drop="Grid_Drop" DragEnter="Grid_DragEnter"
-                    ToolTip="拖拽图片或单击蓝色区域选择图片或文件夹路径">
-                    <materialDesign:PackIcon Kind="FileImagePlusOutline" 
-                                 Height="50" Width="50"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center"/>
-                </Button>
+                <Border x:Name="InputBox" Width="350" Height="300" Margin="10,10,0,0"
+                    Style="{StaticResource MyBorderStyle}" MouseLeftButtonDown="OpenFileButton_Click"
+                    AllowDrop="True" Drop="Images_File_Drop" DragEnter="Images_File_DragEnter"
+                    BorderThickness="3" BorderBrush="#99CCFF" CornerRadius="10" Cursor="Hand">
+                    <Border.Background>
+                        <ImageBrush ImageSource="Images\AddImg.png" Stretch="None"/>
+                    </Border.Background>
+                </Border>
                 <TextBlock Text="输入图片/文件夹路径:" Margin="10,10,10,5" Foreground="#003366"
                     FontWeight="Bold" FontFamily="微软雅黑" FontSize="14"/>
                 <TextBox Margin="10,0,10,5"
-                    x:Name="InputTextBox"
+                    x:Name="InputTextBox" FontFamily="微软雅黑"
                     materialDesign:HintAssist.HelperTextFontSize="16"
                     materialDesign:HintAssist.Hint="Input Path" />
             </StackPanel>
             <StackPanel Grid.Column="1">
-                <Button Width="350" Height="300" Margin="10,10,10,0"
-                    FontFamily="微软雅黑" FontSize="16" BorderThickness="3"
-                    IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
-                    ToolTip="单击黄色区域选择输出文件夹路径">
-                    <materialDesign:PackIcon Kind="FolderMultipleImage"
-                                 Height="50" Width="50"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center"/>
-                </Button>
+                <Border x:Name="OutputBox" Width="350" Height="300" Margin="10,10,0,0"
+                    Style="{StaticResource MyBorderStyle}" 
+                    AllowDrop="True" Drop="Images_File_Drop" DragEnter="Images_File_DragEnter"
+                    BorderThickness="3" BorderBrush="#ffe082" CornerRadius="10" Cursor="Hand">
+                    <Border.Background>
+                        <ImageBrush ImageSource="Images\Image_file.png" Stretch="None"/>
+                    </Border.Background>
+                </Border>
                 <TextBlock Text="输出图片/文件夹路径:" Margin="10,10,10,5" Foreground="#003366"
                     FontWeight="Bold" FontFamily="微软雅黑" FontSize="14"/>
                 <TextBox Margin="10,0,10,5"
-                    x:Name="OutputTextBox"
+                    x:Name="OutputTextBox" FontFamily="微软雅黑"
                     materialDesign:HintAssist.HelperTextFontSize="16"
                     materialDesign:HintAssist.Hint="Output Path" />
             </StackPanel>

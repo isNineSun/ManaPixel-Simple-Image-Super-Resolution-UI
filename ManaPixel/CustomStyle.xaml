@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- 定义 Border 的样式 -->
+    <Style x:Key="MyBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Style.Triggers>
+            <!-- 鼠标进入时的触发器 -->
+            <EventTrigger RoutedEvent="UIElement.MouseEnter">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <!-- 使用 ThicknessAnimation 修改边框粗细 -->
+                            <ThicknessAnimation To="7" Storyboard.TargetProperty="(Border.BorderThickness)" Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+            <!-- 鼠标拖入时的触发器 -->
+            <EventTrigger RoutedEvent="UIElement.DragEnter">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <!-- 使用 ThicknessAnimation 修改边框粗细 -->
+                            <ThicknessAnimation To="7" Storyboard.TargetProperty="(Border.BorderThickness)" Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+            
+            <!-- 鼠标点击时的触发器 -->
+            <EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation To="0.4" Storyboard.TargetProperty="(Border.Opacity)" Duration="0:0:0.1" />
+                            <DoubleAnimation To="1" Storyboard.TargetProperty="(Border.Opacity)" Duration="0:0:0.3" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+            <!-- 鼠标移出时的触发器 -->
+            <EventTrigger RoutedEvent="UIElement.MouseLeave">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <!-- 使用 ThicknessAnimation 恢复边框粗细 -->
+                            <ThicknessAnimation To="3" Storyboard.TargetProperty="(Border.BorderThickness)" Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+            <!-- 鼠标拖出时的触发器 -->
+            <EventTrigger RoutedEvent="UIElement.DragLeave">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <!-- 使用 ThicknessAnimation 恢复边框粗细 -->
+                            <ThicknessAnimation To="3" Storyboard.TargetProperty="(Border.BorderThickness)" Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    
+</ResourceDictionary>
