@@ -31,12 +31,25 @@ namespace ManaPixel
     /// </summary>
     public partial class MainWindow : Window
     {
+        string[] ModleList =
+        {
+            "realesrgan-x4plus",
+            "realesrnet-x4plus",
+            "realesrgan-x4plus-anime",
+            "realesr-animevideov3"
+        };
+
         public MainWindow()
         {
             InitializeComponent();
+
+            ModelSelection.ItemsSource = ModleList;
         }
 
-        // 设置 Border 的背景为指定图片
+        /// <summary>
+        /// 设置 Border 的背景为指定图片
+        /// </summary>
+        /// <param name="imagePath"></param>
         private void SetBorderBackground(string imagePath)
         {
             if (File.Exists(imagePath))
@@ -55,11 +68,20 @@ namespace ManaPixel
             }
         }
 
+        /// <summary>
+        /// 信息提示框弹出SnackBar
+        /// </summary>
+        /// <param name="message"></param>
         private void ShowSnackbarMessage(string message)
         {
             MySnackbar.MessageQueue.Enqueue(message);
         }
 
+        /// <summary>
+        /// 输入图片的处理
+        /// </summary>
+        /// <param name="Path"></param>
+        /// <param name="isFloder"></param>
         private void input_Image(string Path, bool isFloder)
         {
             string DefaultImagePath = "pack://application:,,,/Images/FloderImg.png";//相对路径
@@ -77,6 +99,10 @@ namespace ManaPixel
             }
         }
 
+        /// <summary>
+        /// 当路径为文件时的处理
+        /// </summary>
+        /// <param name="FilePath"></param>
         private void Path_is_File_Process(string FilePath)
         {
             input_Image(FilePath, false);
@@ -85,6 +111,10 @@ namespace ManaPixel
             OutputNameTextBox.IsEnabled = true;
         }
 
+        /// <summary>
+        /// 当路径为文件夹时的处理
+        /// </summary>
+        /// <param name="FloderPath"></param>
         private void Path_is_Floder_Process(string FloderPath)
         {
             input_Image(FloderPath, true);
@@ -93,6 +123,25 @@ namespace ManaPixel
             OutputNameTextBox.Text = "---";
         }
 
+        /// <summary>
+        /// 组合输出路径
+        /// </summary>
+        private string CombinOutputPath() 
+        {
+            string rootPath = OutputTextBox.Text;
+            string subFolder = "\\";
+            string fileName = OutputNameTextBox.Text;
+            string fileExtension = "." + fomatBlock.Text;
+
+            string fullPath = rootPath + subFolder + fileName + fileExtension;
+
+            return fullPath;
+        }
+
+        /// <summary>
+        /// 获取GPU列表
+        /// </summary>
+        /// <returns></returns>
         static string[] GetGPUList()
         {
             // 使用WMI查询获取GPU信息
@@ -101,7 +150,7 @@ namespace ManaPixel
 
             // 保存GPU信息到字符串数组
             List<string> gpuList = new List<string>();
-            int index = 1;
+            int index = 0;
 
             foreach (ManagementObject gpu in gpuCollection)
             {
@@ -119,12 +168,84 @@ namespace ManaPixel
             return gpuList.ToArray();
         }
 
-        //--------------------------------------------事件------------------------------------------------//
+        /// <summary>
+        /// 执行CMD指令：超分辨率指令，MANA！
+        /// </summary>
+        /// <param name="inputImagePath"></param>
+        /// <param name="outputImagePath"></param>
+        /// <param name="modelName"></param>
+        public static void ExecuteCommand(string inputImagePath, string outputImagePath, string modelName)
+        {
+            try
+            {
+                string executablePath = "./realesrgan/realesrgan-ncnn-vulkan.exe"; // 替换为实际的可执行文件路径
+
+                // 构建命令行参数字符串
+                string arguments = $"-i {inputImagePath} -o {outputImagePath} -n {modelName}";
+
+                // 创建 ProcessStartInfo 对象
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = executablePath,
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                // 创建 Process 对象并启动
+                using (Process process = new Process { StartInfo = psi })
+                {
+                    // 打印实际执行的命令
+                    Console.WriteLine($"Executing command: {executablePath} {arguments}");
+
+                    process.Start();
+
+                    // 等待进程结束
+                    process.WaitForExit();
+
+                    // 处理输出（可选）
+                    string output = process.StandardOutput.ReadToEnd();
+                    string error = process.StandardError.ReadToEnd();
+
+                    Console.WriteLine("Command Output:");
+                    Console.WriteLine(output);
+
+                    Console.WriteLine("Command Error:");
+                    Console.WriteLine(error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing command: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// MANA功能管理
+        /// </summary>
+        private void ManagerMANA()
+        {
+            
+        }
+
+        //-----------------------------------------------事件-----------------------------------------------------//
+        /// <summary>
+        /// 拖入文件事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Images_File_DragEnter(object sender, DragEventArgs e)
         {
             Debug.WriteLine("拖拽图片进来了");
         }
 
+        /// <summary>
+        /// 拖入并放下文件事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Images_File_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -147,6 +268,12 @@ namespace ManaPixel
                 }
             }
         }
+
+        /// <summary>
+        /// 打开资源管理器选择图片事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenFileButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -161,6 +288,11 @@ namespace ManaPixel
             }
         }
 
+        /// <summary>
+        /// 拖放文件夹事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Floder_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -183,6 +315,11 @@ namespace ManaPixel
             }
         }
 
+        /// <summary>
+        /// 打开资源管理器选择文件夹事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
         {
             // 创建FolderBrowserDialog对象
@@ -201,6 +338,11 @@ namespace ManaPixel
             }
         }
 
+        /// <summary>
+        /// 获取GPU列表事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GPUListRefresh(object sender, MouseButtonEventArgs e)
         {
             System.Windows.Controls.ComboBox GpuList = sender as System.Windows.Controls.ComboBox;
@@ -208,6 +350,11 @@ namespace ManaPixel
             GpuList.ItemsSource = GetGPUList();
         }
 
+        /// <summary>
+        /// 在资源管理器中打开输出文件夹事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenOutPutPathFloder(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(OutputTextBox.Text))
@@ -223,6 +370,16 @@ namespace ManaPixel
                     ShowSnackbarMessage($"无法打开文件夹: {ex.Message}");
                 }
             }
+        }
+
+        /// <summary>
+        /// 超分辨率事件执行
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Mana_Start(object sender, RoutedEventArgs e)
+        {
+            ExecuteCommand(InputTextBox.Text, CombinOutputPath(), ModleList[ModelSelection.SelectedIndex]);
         }
     }
 }

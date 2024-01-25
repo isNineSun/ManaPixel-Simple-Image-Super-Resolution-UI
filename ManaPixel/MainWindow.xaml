@@ -63,7 +63,7 @@
                                 materialDesign:HintAssist.Hint="ImageName"/>
                             <TextBlock Text="." FontFamily="微软雅黑" FontSize="16" 
                                        VerticalAlignment="Center"/>
-                            <TextBlock Text="png" FontFamily="微软雅黑" FontSize="16" 
+                            <TextBlock x:Name="fomatBlock" Text="png" FontFamily="微软雅黑" FontSize="16" 
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
@@ -79,15 +79,11 @@
                         <StackPanel Orientation="Horizontal" Margin="0,30,0,10">
                             <TextBlock Text="模型" Margin="10,10,5,5" Foreground="#003366"
                                 FontWeight="Bold" FontFamily="微软雅黑" FontSize="14"/>
-                            <ComboBox ToolTip="选择AI模型,默认为realesrgan-x4plus"
+                            <ComboBox x:Name="ModelSelection" ToolTip="选择AI模型,默认为realesrgan-x4plus"
                                 Width="415" Height="40" FontSize="14" Padding="10,10,10,10"
                                 materialDesign:HintAssist.Hint="Modle" FontFamily="微软雅黑"
                                 FontWeight="Bold"
                                 Style="{StaticResource MaterialDesignOutlinedComboBox}" >
-                                <ComboBoxItem Content="realesrgan-x4plus (默认)" />
-                                <ComboBoxItem Content="realesrnet-x4plus" />
-                                <ComboBoxItem Content="realesrgan-x4plus-anime (针对动漫插画图像优化，有更小的体积)" />
-                                <ComboBoxItem Content="realesr-animevideov3 (针对动漫视频)" />
                             </ComboBox>
                         </StackPanel>
 
@@ -127,7 +123,7 @@
                             Content="MANA!" FontFamily="Impact" FontSize="45" FontWeight="Bold"
                             IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                            ToolTip="开始图片超分辨率转化" />
+                            ToolTip="开始图片超分辨率转化" Click="Mana_Start"/>
                         <StackPanel>
                             <Button Width="100" Height="40" VerticalAlignment="Top" Margin="20,0,0,0" Padding="0"
                                 Content="打开文件夹" FontFamily="微软雅黑" FontSize="14" FontWeight="Bold"
