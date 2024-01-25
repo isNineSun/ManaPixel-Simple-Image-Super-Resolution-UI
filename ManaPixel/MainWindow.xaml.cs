@@ -17,6 +17,7 @@ using System.IO;
 using System.Security.Policy;
 using Microsoft.Win32;
 using System.Windows.Forms;
+using System.Management;
 
 using DragEventArgs = System.Windows.DragEventArgs;
 using DataFormats = System.Windows.DataFormats;
@@ -90,6 +91,32 @@ namespace ManaPixel
             OutputTextBox.Text = FloderPath;
             OutputNameTextBox.IsEnabled = false;
             OutputNameTextBox.Text = "---";
+        }
+
+        static string[] GetGPUList()
+        {
+            // 使用WMI查询获取GPU信息
+            var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
+            var gpuCollection = searcher.Get();
+
+            // 保存GPU信息到字符串数组
+            List<string> gpuList = new List<string>();
+            int index = 1;
+
+            foreach (ManagementObject gpu in gpuCollection)
+            {
+                string gpuName = gpu["Name"].ToString();
+
+                // 过滤掉虚拟设备
+                if (!gpuName.Contains("OrayIddDriver"))
+                {
+                    string gpuInfo = $"{index}. {gpuName}";
+                    gpuList.Add(gpuInfo);
+                    index++;
+                }
+            }
+
+            return gpuList.ToArray();
         }
 
         //--------------------------------------------事件------------------------------------------------//
@@ -171,6 +198,30 @@ namespace ManaPixel
                 string selectedFolderPath = folderBrowserDialog.SelectedPath;
 
                 OutputTextBox.Text = selectedFolderPath;
+            }
+        }
+
+        private void GPUListRefresh(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Controls.ComboBox GpuList = sender as System.Windows.Controls.ComboBox;
+
+            GpuList.ItemsSource = GetGPUList();
+        }
+
+        private void OpenOutPutPathFloder(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(OutputTextBox.Text))
+            {
+                try
+                {
+                    // 使用 Process.Start 打开文件夹
+                    Process.Start("explorer.exe", OutputTextBox.Text);
+                }
+                catch (Exception ex)
+                {
+                    // 处理异常
+                    ShowSnackbarMessage($"无法打开文件夹: {ex.Message}");
+                }
             }
         }
     }

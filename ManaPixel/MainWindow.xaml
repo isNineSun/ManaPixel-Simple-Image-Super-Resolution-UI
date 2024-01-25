@@ -79,46 +79,45 @@
                         <StackPanel Orientation="Horizontal" Margin="0,30,0,10">
                             <TextBlock Text="模型" Margin="10,10,5,5" Foreground="#003366"
                                 FontWeight="Bold" FontFamily="微软雅黑" FontSize="14"/>
-                            <ComboBox
+                            <ComboBox ToolTip="选择AI模型,默认为realesrgan-x4plus"
                                 Width="415" Height="40" FontSize="14" Padding="10,10,10,10"
-                                materialDesign:HintAssist.Hint="Modle"
+                                materialDesign:HintAssist.Hint="Modle" FontFamily="微软雅黑"
+                                FontWeight="Bold"
                                 Style="{StaticResource MaterialDesignOutlinedComboBox}" >
-                                <ComboBoxItem Content="Item 1" />
-                                <ComboBoxItem Content="Item 2" />
-                                <ComboBoxItem Content="Item 3" />
+                                <ComboBoxItem Content="realesrgan-x4plus (默认)" />
+                                <ComboBoxItem Content="realesrnet-x4plus" />
+                                <ComboBoxItem Content="realesrgan-x4plus-anime (针对动漫插画图像优化，有更小的体积)" />
+                                <ComboBoxItem Content="realesr-animevideov3 (针对动漫视频)" />
                             </ComboBox>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
                             <TextBlock Text="缩放比例" Margin="10,10,5,5" Foreground="#003366"
                             FontWeight="Bold" FontFamily="微软雅黑" FontSize="14"/>
-                            <ComboBox
+                            <ComboBox ToolTip="调整缩放的比例,默认为4"
                             Width="80" Height="40" FontSize="14" Padding="10,10,10,10"
                             materialDesign:HintAssist.Hint="Scale"
                             Style="{StaticResource MaterialDesignOutlinedComboBox}" >
-                                <ComboBoxItem Content="Item 1" />
-                                <ComboBoxItem Content="Item 2" />
-                                <ComboBoxItem Content="Item 3" />
+                                <ComboBoxItem Content="2" />
+                                <ComboBoxItem Content="3" />
+                                <ComboBoxItem Content="4" />
                             </ComboBox>
                             <TextBlock Text="GPU选择" Margin="10,10,5,5" Foreground="#003366"
                             FontWeight="Bold" FontFamily="微软雅黑" FontSize="14"/>
-                            <ComboBox
+                            <ComboBox ToolTip="如果有多个GPU的话,选择用于生成图片GPU,默认自动选择"
                             Width="80" Height="40" FontSize="14" Padding="10,10,10,10"
-                            materialDesign:HintAssist.Hint="GPU"
+                            materialDesign:HintAssist.Hint="GPU" PreviewMouseLeftButtonDown="GPUListRefresh"
                             Style="{StaticResource MaterialDesignOutlinedComboBox}" >
-                                <ComboBoxItem Content="Item 1" />
-                                <ComboBoxItem Content="Item 2" />
-                                <ComboBoxItem Content="Item 3" />
                             </ComboBox>
                             <TextBlock Text="输出格式" Margin="10,10,5,5" Foreground="#003366"
                             FontWeight="Bold" FontFamily="微软雅黑" FontSize="14"/>
-                            <ComboBox
+                            <ComboBox ToolTip="输出图片的格式,默认为png"
                             Width="80" Height="40" FontSize="14" Padding="10,10,10,10"
                             materialDesign:HintAssist.Hint="Format"
                             Style="{StaticResource MaterialDesignOutlinedComboBox}" >
-                                <ComboBoxItem Content="Item 1" />
-                                <ComboBoxItem Content="Item 2" />
-                                <ComboBoxItem Content="Item 3" />
+                                <ComboBoxItem Content="jpg" />
+                                <ComboBoxItem Content="png" />
+                                <ComboBoxItem Content="webp"/>
                             </ComboBox>
                         </StackPanel>
                     </StackPanel>
@@ -134,7 +133,7 @@
                                 Content="打开文件夹" FontFamily="微软雅黑" FontSize="14" FontWeight="Bold"
                                 IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                                 Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
-                                ToolTip="打开输出图片文件夹" />
+                                ToolTip="打开输出图片文件夹" Click="OpenOutPutPathFloder"/>
 
                             <Button Width="100" Height="40" VerticalAlignment="Top" Margin="20,20,0,0" Padding="0"
                                 Content="配置" FontFamily="微软雅黑" FontSize="14" FontWeight="Bold"
