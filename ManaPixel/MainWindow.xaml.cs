@@ -23,13 +23,15 @@ using DragEventArgs = System.Windows.DragEventArgs;
 using DataFormats = System.Windows.DataFormats;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using MaterialDesignThemes.Wpf;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Button = System.Windows.Controls.Button;
 
 namespace ManaPixel
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         string[] ModleList =
         {
@@ -38,6 +40,9 @@ namespace ManaPixel
             "realesrgan-x4plus-anime",
             "realesr-animevideov3"
         };
+
+        private Process process;
+        private string OutputfullPath;
 
         public MainWindow()
         {
@@ -65,6 +70,21 @@ namespace ManaPixel
                 ImageBrush imageBrush = new ImageBrush(bitmap);
                 imageBrush.Stretch = Stretch.UniformToFill;
                 InputBox.Background = imageBrush;
+            }
+        }
+
+        private void SetOutputImgBackground(string imagePath)
+        {
+            if (File.Exists(imagePath))
+            {
+                OutputBox.Dispatcher.Invoke(() =>
+                {
+                    BitmapImage bitmap = new BitmapImage(new Uri(imagePath));
+                    ImageBrush imageBrush = new ImageBrush(bitmap);
+                    imageBrush.Stretch = Stretch.UniformToFill;
+
+                    OutputBox.Background = imageBrush;
+                });
             }
         }
 
@@ -134,6 +154,7 @@ namespace ManaPixel
             string fileExtension = "." + fomatBlock.Text;
 
             string fullPath = rootPath + subFolder + fileName + fileExtension;
+            OutputfullPath = fullPath;
 
             return fullPath;
         }
@@ -167,6 +188,15 @@ namespace ManaPixel
 
             return gpuList.ToArray();
         }
+        private async void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // 在窗口关闭时终止进程
+            if (process != null && !process.HasExited)
+            {
+                process.Kill();
+                await process.WaitForExitAsync(); // 等待进程结束
+            }
+        }
 
         /// <summary>
         /// 执行CMD指令：超分辨率指令，MANA！
@@ -174,16 +204,14 @@ namespace ManaPixel
         /// <param name="inputImagePath"></param>
         /// <param name="outputImagePath"></param>
         /// <param name="modelName"></param>
-        public static void ExecuteCommand(string inputImagePath, string outputImagePath, string modelName)
+        private async void ExecuteCommand(string inputImagePath, string outputImagePath, string modelName)
         {
             try
             {
-                string executablePath = "./realesrgan/realesrgan-ncnn-vulkan.exe"; // 替换为实际的可执行文件路径
+                string executablePath = "./realesrgan/realesrgan-ncnn-vulkan.exe";
 
-                // 构建命令行参数字符串
                 string arguments = $"-i {inputImagePath} -o {outputImagePath} -n {modelName}";
 
-                // 创建 ProcessStartInfo 对象
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
                     FileName = executablePath,
@@ -194,31 +222,79 @@ namespace ManaPixel
                     CreateNoWindow = true
                 };
 
-                // 创建 Process 对象并启动
-                using (Process process = new Process { StartInfo = psi })
+                process = new Process { StartInfo = psi };
+
+                Console.WriteLine($"Executing command: {executablePath} {arguments}");
+
+                // 注册事件处理程序以处理异步读取输出流
+                process.ErrorDataReceived += Process_OutputDataReceived;
+
+                await progressBar.Dispatcher.InvokeAsync(() =>
                 {
-                    // 打印实际执行的命令
-                    Console.WriteLine($"Executing command: {executablePath} {arguments}");
+                    progressBar.Visibility = Visibility.Visible;
+                });
+                await ProgressNumUI.Dispatcher.InvokeAsync(() =>
+                {
+                    ProgressNumUI.Visibility = Visibility.Visible;
+                });
 
-                    process.Start();
+                // 启动进程并开始异步读取输出流
+                process.Start();
+                process.BeginErrorReadLine();
 
-                    // 等待进程结束
-                    process.WaitForExit();
-
-                    // 处理输出（可选）
-                    string output = process.StandardOutput.ReadToEnd();
-                    string error = process.StandardError.ReadToEnd();
-
-                    Console.WriteLine("Command Output:");
-                    Console.WriteLine(output);
-
-                    Console.WriteLine("Command Error:");
-                    Console.WriteLine(error);
-                }
+                // 等待进程结束
+                await process.WaitForExitAsync();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error executing command: {ex.Message}");
+            }
+        }
+
+        private async void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.Data) && e.Data.EndsWith("%"))
+            {
+                string percentageStr = e.Data.Trim('%');
+                if (double.TryParse(percentageStr, out double percentage))
+                {
+                    // 更新 ProgressBar
+                    await progressBar.Dispatcher.InvokeAsync(() =>
+                    {
+                        progressBar.Value = percentage;
+                    });
+                    await Progress.Dispatcher.InvokeAsync(() =>
+                    {
+                        Progress.Text = percentage.ToString();
+                    });
+                }
+            }
+            Console.WriteLine(e.Data);
+
+            if (process != null && process.HasExited && string.IsNullOrEmpty(e.Data))
+            {
+                // 在这里将 ProgressBar 置为 100%
+                await progressBar.Dispatcher.InvokeAsync(() =>
+                {
+                    progressBar.Value = 100;
+                });
+
+                await ProgressNumUI.Dispatcher.InvokeAsync(() =>
+                {
+                    ProgressNumUI.Visibility = Visibility.Hidden;
+                });
+
+                await progressBar.Dispatcher.InvokeAsync(() =>
+                {
+                    progressBar.Visibility = Visibility.Hidden;
+                });
+
+                await MANA_Button.Dispatcher.InvokeAsync(() =>
+                {
+                    MANA_Button.IsEnabled = true;
+                });
+
+                SetOutputImgBackground(OutputfullPath);
             }
         }
 
@@ -379,7 +455,23 @@ namespace ManaPixel
         /// <param name="e"></param>
         private void Mana_Start(object sender, RoutedEventArgs e)
         {
+            Button button = sender as Button;
+
+            button.IsEnabled = false;
             ExecuteCommand(InputTextBox.Text, CombinOutputPath(), ModleList[ModelSelection.SelectedIndex]);
         }
+    }
+}
+
+public static class ProcessExtensions
+{
+    public static Task WaitForExitAsync(this Process process)
+    {
+        var tcs = new TaskCompletionSource<object>();
+
+        process.EnableRaisingEvents = true;
+        process.Exited += (s, e) => tcs.TrySetResult(null);
+
+        return tcs.Task;
     }
 }

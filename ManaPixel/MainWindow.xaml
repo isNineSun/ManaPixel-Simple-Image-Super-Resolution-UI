@@ -11,7 +11,7 @@
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="ManaPixel-V1.0" Height="600" Width="820" MinHeight="600" MinWidth="820" MaxHeight="600" MaxWidth="820"
+        Title="ManaPixel-V1.0" Height="575" Width="820" MinHeight="575" MinWidth="820" MaxHeight="575" MaxWidth="820"
         AllowDrop="True" ResizeMode="CanMinimize">
 
     <materialDesign:DialogHost SnackbarMessageQueue="{Binding ElementName=MySnackbar, Path=MessageQueue}">
@@ -119,7 +119,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Margin="20,30,0,0" Orientation="Horizontal">
-                        <Button Width="190" Height="100" VerticalAlignment="Top"
+                        <Button x:Name="MANA_Button" Width="190" Height="100" VerticalAlignment="Top"
                             Content="MANA!" FontFamily="Impact" FontSize="45" FontWeight="Bold"
                             IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
@@ -137,6 +137,15 @@
                                 Style="{StaticResource MaterialDesignRaisedLightButton}"
                                 ToolTip="对软件进行一些进阶配置" />
                         </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid>
+                    <ProgressBar x:Name="progressBar" Height="20" Visibility="Hidden"/>
+                    <StackPanel x:Name="ProgressNumUI" Orientation="Horizontal" Visibility="Hidden">
+                        <TextBlock x:Name="Progress" Text="0" VerticalAlignment="Center"
+                               FontFamily="Impact" FontSize="20" Foreground="AliceBlue"/>
+                        <TextBlock  Text="%" VerticalAlignment="Center"
+                                FontFamily="Impact" FontSize="20" Foreground="AliceBlue"/>
                     </StackPanel>
                 </Grid>
             </StackPanel>
