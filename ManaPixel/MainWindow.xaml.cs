@@ -25,6 +25,7 @@ using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using MaterialDesignThemes.Wpf;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Controls.Button;
+using ComboBox = System.Windows.Controls.ComboBox;
 
 namespace ManaPixel
 {
@@ -177,13 +178,9 @@ namespace ManaPixel
             {
                 string gpuName = gpu["Name"].ToString();
 
-                // 过滤掉虚拟设备
-                if (!gpuName.Contains("OrayIddDriver"))
-                {
-                    string gpuInfo = $"{index}. {gpuName}";
-                    gpuList.Add(gpuInfo);
-                    index++;
-                }
+                string gpuInfo = $"{index}. {gpuName}";
+                gpuList.Add(gpuInfo);
+                index++;
             }
 
             return gpuList.ToArray();
@@ -201,16 +198,26 @@ namespace ManaPixel
         /// <summary>
         /// 执行CMD指令：超分辨率指令，MANA！
         /// </summary>
-        /// <param name="inputImagePath"></param>
-        /// <param name="outputImagePath"></param>
-        /// <param name="modelName"></param>
-        private async void ExecuteCommand(string inputImagePath, string outputImagePath, string modelName)
+        private async void ExecuteCommand()
         {
             try
             {
                 string executablePath = "./realesrgan/realesrgan-ncnn-vulkan.exe";
+                string arguments;
 
-                string arguments = $"-i {inputImagePath} -o {outputImagePath} -n {modelName}";
+                if (!string.IsNullOrEmpty(ManagerMANA()))
+                {
+                    arguments = ManagerMANA();
+                }
+                else 
+                {
+                    return;
+                }
+
+                MANA_Button.Dispatcher.Invoke(() =>
+                {
+                    MANA_Button.IsEnabled = false;
+                });
 
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
@@ -301,9 +308,59 @@ namespace ManaPixel
         /// <summary>
         /// MANA功能管理
         /// </summary>
-        private void ManagerMANA()
+        private string ManagerMANA()
         {
-            
+            string arguments = null;
+            string inputPath = InputTextBox.Text;
+            string outputPath = CombinOutputPath();
+            string Model = (ModelSelection.SelectedIndex >= 0) ? ModleList[ModelSelection.SelectedIndex] : null;
+            string scale = (ScaleSelection.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            string GPU = (GPUSelection.SelectedIndex >= 0) ? GPUSelection.SelectedIndex.ToString() : null;
+            string format = (fomatSelection.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+            if (string.IsNullOrEmpty(inputPath))
+            {
+                ShowSnackbarMessage("输入路径为空");
+            }
+            else
+            if (!File.Exists(outputPath))
+            {
+                if (!string.IsNullOrEmpty(inputPath) && File.Exists(inputPath))
+                {
+                    arguments += $"-i {inputPath} ";
+                }
+
+                if (!string.IsNullOrEmpty(outputPath))
+                {
+                    arguments += $"-o {outputPath} ";
+                }
+
+                if (!string.IsNullOrEmpty(Model))
+                {
+                    arguments += $"-n {Model} ";
+                }
+
+                if (!string.IsNullOrEmpty(scale))
+                {
+                    arguments += $"-s {scale} ";
+                }
+
+                if (!string.IsNullOrEmpty(GPU))
+                {
+                    arguments += $"-g {GPU} ";
+                }
+
+                if (!string.IsNullOrEmpty(format))
+                {
+                    arguments += $"-f {format} ";
+                }
+            }
+            else
+            {
+                ShowSnackbarMessage("输出文件已存在或有重名文件");
+            }
+
+            return arguments;
         }
 
         //-----------------------------------------------事件-----------------------------------------------------//
@@ -455,10 +512,13 @@ namespace ManaPixel
         /// <param name="e"></param>
         private void Mana_Start(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
+            ExecuteCommand();
+        }
 
-            button.IsEnabled = false;
-            ExecuteCommand(InputTextBox.Text, CombinOutputPath(), ModleList[ModelSelection.SelectedIndex]);
+        private void fomatSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = sender as ComboBox;
+            fomatBlock.Text = (comboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
         }
     }
 }
