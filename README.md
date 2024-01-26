@@ -5,6 +5,7 @@
   - [Table of Contents](#table-of-contents)
   - [✨前言](#前言)
   - [🚀快速开始](#快速开始)
+    - [🖼️动图演示（\>17MB）](#️动图演示17mb)
   - [😎进阶配置](#进阶配置)
   - [🤓高级配置](#高级配置)
 
@@ -20,6 +21,9 @@
     
 
 ![](https://raw.githubusercontent.com/isNineSun/img_repository/main/PixPin_2024-01-25_23-42-47.png)    
+
+### 🖼️动图演示（>17MB）
+![](https://raw.githubusercontent.com/isNineSun/img_repository/main/PixPin_2024-01-27_00-43-16.gif)    
 
 ## 😎进阶配置
 （施工中...）
