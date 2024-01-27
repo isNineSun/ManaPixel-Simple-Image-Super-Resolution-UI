@@ -316,7 +316,7 @@ namespace ManaPixel
             string Model = (ModelSelection.SelectedIndex >= 0) ? ModleList[ModelSelection.SelectedIndex] : null;
             string scale = (ScaleSelection.SelectedItem as ComboBoxItem)?.Content?.ToString();
             string GPU = (GPUSelection.SelectedIndex >= 0) ? GPUSelection.SelectedIndex.ToString() : null;
-            string format = (fomatSelection.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            int ttaMode = TTAModeSelection.SelectedIndex;
 
             if (string.IsNullOrEmpty(inputPath))
             {
@@ -350,9 +350,9 @@ namespace ManaPixel
                     arguments += $"-g {GPU} ";
                 }
 
-                if (!string.IsNullOrEmpty(format))
+                if (ttaMode > 0)
                 {
-                    arguments += $"-f {format} ";
+                    arguments += $"-x ";
                 }
             }
             else
@@ -503,6 +503,10 @@ namespace ManaPixel
                     ShowSnackbarMessage($"无法打开文件夹: {ex.Message}");
                 }
             }
+            else
+            {
+                ShowSnackbarMessage("文件夹不存在");
+            }
         }
 
         /// <summary>
@@ -513,12 +517,6 @@ namespace ManaPixel
         private void Mana_Start(object sender, RoutedEventArgs e)
         {
             ExecuteCommand();
-        }
-
-        private void fomatSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox comboBox = sender as ComboBox;
-            fomatBlock.Text = (comboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
         }
     }
 }

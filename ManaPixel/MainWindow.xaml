@@ -105,14 +105,14 @@
                             materialDesign:HintAssist.Hint="GPU" PreviewMouseLeftButtonDown="GPUListRefresh"
                             Style="{StaticResource MaterialDesignOutlinedComboBox}" >
                             </ComboBox>
-                            <TextBlock Text="输出格式" Margin="10,10,5,5" Foreground="#003366"
+                            <TextBlock Text="TTA模式" Margin="10,10,5,5" Foreground="#003366"
                             FontWeight="Bold" FontFamily="微软雅黑" FontSize="14"/>
-                            <ComboBox x:Name="fomatSelection" ToolTip="输出图片的格式,默认为png"
+                            <ComboBox x:Name="TTAModeSelection" ToolTip="输出图片的格式,默认为png"
                             Width="80" Height="40" FontSize="14" Padding="10,10,10,10"
-                            materialDesign:HintAssist.Hint="Format" SelectionChanged="fomatSelection_SelectionChanged"
+                            materialDesign:HintAssist.Hint="TTA" FontFamily="微软雅黑"
                             Style="{StaticResource MaterialDesignOutlinedComboBox}" >
-                                <ComboBoxItem Content="jpg" />
-                                <ComboBoxItem Content="png" />
+                                <ComboBoxItem Content="关闭" />
+                                <ComboBoxItem Content="开启" />
                             </ComboBox>
                         </StackPanel>
                     </StackPanel>
