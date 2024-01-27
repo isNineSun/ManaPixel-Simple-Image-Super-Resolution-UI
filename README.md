@@ -1,8 +1,14 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/isNineSun/img_repository/main/00125-1369921032-smile%2C1girl%2Cchild%2Cavatar%20icon%2Cflat%20color%2Cwhite%20hair%2Cicon%20_(computing_)%2C.png" height=120>
+  <img src="ManaPixel\Images\LOGO.png" height=120>
 </p>
 
 # ManaPixel-一键超分辨工具
+![GitHub repo size](https://img.shields.io/github/repo-size/isNinesun/MANAPixel)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/isNineSun/ManaPixel/total)
+![GitHub issues](https://img.shields.io/github/issues/isNineSun/ManaPixel)
+![GitHub License](https://img.shields.io/github/license/isNinesun/MANAPixel)
+
+
 
 ## Table of Contents
 - [ManaPixel-一键超分辨工具](#manapixel-一键超分辨工具)
@@ -26,9 +32,7 @@
 ## 🚀快速开始
 1. 拖入图片至蓝色框内。    
 2. 点击“MANA!”进行超分！    
-3. 等待超分完成可点击“打开文件夹”打开超分辨率输出的文件夹（不进行配置的情况下输出至输入文件同文件夹）。   
-    
-    
+3. 等待超分完成可点击“打开文件夹”打开超分辨率输出的文件夹（不进行配置的情况下输出至输入文件同文件夹）。  
 
 ![](https://raw.githubusercontent.com/isNineSun/img_repository/main/PixPin_2024-01-25_23-42-47.png)    
 
