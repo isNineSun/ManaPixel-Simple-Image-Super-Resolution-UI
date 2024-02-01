@@ -203,13 +203,9 @@ namespace ManaPixel
             try
             {
                 string executablePath = "./realesrgan/realesrgan-ncnn-vulkan.exe";
-                string arguments;
+                string manaResult = ManagerMANA();
 
-                if (!string.IsNullOrEmpty(ManagerMANA()))
-                {
-                    arguments = ManagerMANA();
-                }
-                else 
+                if (string.IsNullOrEmpty(manaResult))
                 {
                     return;
                 }
@@ -222,7 +218,7 @@ namespace ManaPixel
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
                     FileName = executablePath,
-                    Arguments = arguments,
+                    Arguments = manaResult,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -231,7 +227,7 @@ namespace ManaPixel
 
                 process = new Process { StartInfo = psi };
 
-                Console.WriteLine($"Executing command: {executablePath} {arguments}");
+                Console.WriteLine($"Executing command: {executablePath} {manaResult}");
 
                 // 注册事件处理程序以处理异步读取输出流
                 process.ErrorDataReceived += Process_OutputDataReceived;
@@ -318,6 +314,8 @@ namespace ManaPixel
             string GPU = (GPUSelection.SelectedIndex >= 0) ? GPUSelection.SelectedIndex.ToString() : null;
             int ttaMode = TTAModeSelection.SelectedIndex;
 
+            bool input_invalid = false;
+
             if (string.IsNullOrEmpty(inputPath))
             {
                 ShowSnackbarMessage("输入路径为空");
@@ -325,14 +323,46 @@ namespace ManaPixel
             else
             if (!File.Exists(outputPath))
             {
-                if (!string.IsNullOrEmpty(inputPath) && File.Exists(inputPath))
+                if (!string.IsNullOrEmpty(inputPath))
                 {
-                    arguments += $"-i {inputPath} ";
-                }
+                    if (Directory.Exists(inputPath))//是文件夹
+                    {
+                        arguments += $"-i {inputPath} ";
 
-                if (!string.IsNullOrEmpty(outputPath))
+                    }
+                    else if (File.Exists(inputPath))//是文件
+                    {
+                        string fileName = System.IO.Path.GetFileName(inputPath);
+                        if (!fileName.Contains(" "))
+                        {
+                            arguments += $"-i {inputPath} ";
+                        }
+                        else
+                        {
+                            ShowSnackbarMessage("图片文件名不能包含空格");
+                        }
+                    }
+                    else
+                    {
+                        ShowSnackbarMessage("输入文件路径既不是一个有效文件也不是一个文件夹");
+                        input_invalid = true;
+                    }
+
+                    if (Directory.Exists(inputPath))
+                    {
+                        outputPath = OutputTextBox.Text;
+                    }
+                }
+                if (!string.IsNullOrEmpty(outputPath) || input_invalid)
                 {
-                    arguments += $"-o {outputPath} ";
+                    if (Directory.Exists(OutputTextBox.Text))
+                    {
+                        arguments += $"-o {outputPath} ";
+                    }
+                    else
+                    {
+                        ShowSnackbarMessage("输出路径不是一个有效文件夹");
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(Model))
