@@ -16,7 +16,10 @@
   - [✨前言](#前言)
   - [👜获取软件](#获取软件)
   - [🚀快速开始](#快速开始)
-    - [🖼️动图演示（\>17MB）](#️动图演示17mb)
+    - [👉单张图片进行解析](#单张图片进行解析)
+      - [🖼️动图演示（\>17MB）](#️动图演示17mb)
+    - [👉图片批量进行解析](#图片批量进行解析)
+      - [🖼️动图演示](#️动图演示)
   - [😎进阶配置](#进阶配置)
     - [模型](#模型)
     - [缩放比例](#缩放比例)
@@ -35,14 +38,24 @@
 ![](https://raw.githubusercontent.com/isNineSun/img_repository/main/29ccf97da91069540b3d080f0fef4c7a.png)    
 
 ## 🚀快速开始
+### 👉单张图片进行解析
 1. 拖入图片至蓝色框内。    
 2. 点击“MANA!”进行超分！    
 3. 等待超分完成可点击“打开文件夹”打开超分辨率输出的文件夹（不进行配置的情况下输出至输入文件同文件夹）。  
 
 ![](https://raw.githubusercontent.com/isNineSun/img_repository/main/PixPin_2024-01-25_23-42-47.png)    
 
-### 🖼️动图演示（>17MB）
+#### 🖼️动图演示（>17MB）
 ![](https://raw.githubusercontent.com/isNineSun/img_repository/main/PixPin_2024-01-27_00-43-16.gif)    
+
+### 👉图片批量进行解析
+1. 拖入输入文件夹至蓝色框内。    
+2. 拖入输出文件夹至黄色框内。    
+3. 点击“MANA!”进行超分！    
+4. 等待超分完成可点击“打开文件夹”打开超分辨率输出的文件夹。     
+
+#### 🖼️动图演示
+![](https://raw.githubusercontent.com/isNineSun/img_repository/main/PixPin_2024-02-02_00-55-26.gif)
 
 ## 😎进阶配置
 本章节将进行软件界面可配置参数的介绍。    
