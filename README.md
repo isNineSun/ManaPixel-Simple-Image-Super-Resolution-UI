@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="ManaPixel\Images\LOGO.png" height=120>
+  <img src="https://raw.githubusercontent.com/isNineSun/img_repository/main/LOGO.png" height=120>
 </p>
 
 # ManaPixel-一键超分辨工具
